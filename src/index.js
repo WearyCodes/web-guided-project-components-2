@@ -8,12 +8,18 @@
 
 // 👉 TASK 2- Select the "entry point", the element
 // inside of which we'll inject our dog cards 
-const entryPoint = null
+const entryPoint = document.querySelector('.entry')
 
 
 // 👉 TASK 3- `dogCardMaker` takes an object and returns a Dog Card.
 // Use this function to build a Card, and append it to the entry point.
 function dogCardMaker({ imageURL, breed }) {
+
+const dogCard = document.createElement('div')
+const dogImage = document.createElement('img')
+const dogText = document.createElement('h3')
+
+
   // instantiating the elements
   /*
     <div class="dog-card">
@@ -22,19 +28,28 @@ function dogCardMaker({ imageURL, breed }) {
     </div>
   */
   // set class names, attributes and text
-
+dogText.textContent = `Breed: ${breed}`
+dogImage.src = imageURL;
+dogImage.classList.add('dog-image')
+dogCard.classList.add('dog-card');
+console.log(dogCard)
   // create the hierarchy
+dogCard.appendChild(dogImage)
+dogCard.appendChild(dogText)
 
   // add some interactivity
-
+dogCard.addEventListener('click', () => {
+  dogCard.classList.toggle('selected')
+})
   // never forget to return!
+  return dogCard
 }
+
 
 
 // 👉 TASK 4- Bring the Axios library into the project using one of two methods:
 //    * Traditional way: put another script tag inside index.html (`https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js`)
 //    * Projects with npm: install it with npm and import it into this file
-
 
 // 👉 TASK 5- Fetch dogs from `https://dog.ceo/api/breed/{breed}/images/random/{number}`
 //    * ON SUCCESS: use the data to create dogCards and append them to the entry point
@@ -45,10 +60,30 @@ function dogCardMaker({ imageURL, breed }) {
 // 👉 (OPTIONAL) TASK 6- Wrap the fetching operation inside a function `getDogs`
 // that takes a breed and a count (of dogs)
 
+function getDogs(breed, count){
+  axios.get(`https://dog.ceo/api/breed/${breed}/images/random/${count}`)
+.then(res => {
+res.data.message.forEach(imageURL => {
+  const dogCard = dogCardMaker({imageURL: imageURL, breed: breed})
+entryPoint.appendChild(dogCard)
+})})
+
+  
+.catch(err => {
+console.error(err)
+})
+.finally(() => console.log('OHMYGOD DONE'));
+}
+
+
+
 
 // 👉 (OPTIONAL) TASK 7- Put a button in index.html to 'get dogs' and add a click
 // event listener that executes `getDogs`
-
+document.querySelector('#dogbutton').addEventListener('click', () => {
+  getDogs('mastiff', 3);
+  getDogs('appenzeller', 3)
+})
 
 // 👉 (OPTIONAL) TASK 8- Import the breeds from `breeds.js`
 // and loop over them, fetching a dog at each iteration
